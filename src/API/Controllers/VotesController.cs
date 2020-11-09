@@ -30,17 +30,17 @@ namespace API.Controllers
         {
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            var vote = new Vote(userId, request.MovieId, request.Type);
+            var user = await _dbContext.Users.FindAsync(userId);
 
-            _dbContext.Votes.Add(vote);
+            user.Vote(request.MovieId, request.Type);
 
             await _dbContext.SaveChangesAsync();
 
             return Created(string.Empty, default);
         }
 
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(int id, VoteDto request)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Change(int id, VoteDto request)
         {
             var vote = await _dbContext.Votes.FindAsync(id);
 
@@ -57,7 +57,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Retract(int id)
         {
             var vote = await _dbContext.Votes.FindAsync(id);
 
